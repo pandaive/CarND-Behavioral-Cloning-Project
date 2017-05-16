@@ -2,9 +2,11 @@ import csv
 import cv2
 import numpy as np
 
+# I used my own data as well as data given by Udacity
 data_source = ['./datas/20170516/', './datas/data/']
 lines = []
 
+# load log content
 for i in range(len(data_source)):
     lines.append([])
     with open(data_source[i] + 'driving_log.csv') as csvfile:
@@ -17,13 +19,14 @@ print("Loading images..")
 images = []
 measurements = []
 
+# helper method to clean up the code
 def addImage(filepath, measurement, correction=0.0):
     global images, measurements
     image = cv2.imread(filepath)
-    #image = cv2.resize(image, (0,0), fx=0.5, fy=0.5)
     images.append(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     measurements.append(measurement+correction)
     
+# for all data sources, load data
 for i in range(len(data_source)):
     for line in lines[i]:
         correction = 0.2
@@ -34,16 +37,18 @@ for i in range(len(data_source)):
         filepath = data_source[i] + 'IMG/' + source_path.split("/")[-1]
         addImage(filepath, measurement=float(line[3]))
 
+        # if given image is steering right, add image from left side with correction
         if (float(line[3]) > 0):
             filepath = data_source[i] + 'IMG/' + source_path_left.split("/")[-1]
             addImage(filepath, measurement=float(line[3]),correction=correction)
 
+        # if given image is steering left, add image from right side with correction
         if (float(line[3]) < 0):
             filepath = data_source[i] + 'IMG/' + source_path_right.split("/")[-1]
             addImage(filepath, measurement=float(line[3]), correction=correction*-1.0)
 
     augmented_images, augmented_measurements = [], []
-
+    # flip images with steering right/left and add to data
     for image,measurement in zip(images, measurements):
         augmented_images.append(image)
         augmented_measurements.append(measurement)
@@ -71,10 +76,9 @@ model.add(MaxPooling2D())
 model.add(Conv2D(48,(5,5),activation="relu"))
 model.add(MaxPooling2D())
 model.add(Conv2D(64,(5,5),activation="relu"))
-x = Flatten()
-model.add(x)
-print(x.output_shape, x.input_shape)
+model.add(Flatten())
 model.add(Dense(100,activation="relu"))
+model.add(Dropout(0.2))
 model.add(Dense(50,activation="relu"))
 model.add(Dense(1))
 
