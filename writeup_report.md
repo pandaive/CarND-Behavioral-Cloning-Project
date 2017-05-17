@@ -48,6 +48,7 @@ python drive.py model.h5
 #### 3. Submission code is usable and readable
 
 The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+I didn't use recommended python generator, as on my PC it was really slow. I didn't figure out what was the reason, I discussed the problem with my mentor and shared my model with him, he ran it without any problems, but for me it was taking much more time than with usual approach. Because of that I wasn't using it. I provided additional file, *model_with_generator.py* to show that I knew how to use it.
 
 ### Model Architecture and Training Strategy
 
